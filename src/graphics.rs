@@ -19,18 +19,6 @@ pub struct Graphics {
     _renderer: Canvas<Window>,
 }
 
-/*pub fn loadImage(filePath: &str) -> &Surface;
-
-pub fn loadText(font: &Font, text: &char, color: Color) -> &Surface;
-
-pub fn blitSurface(source: &Texture, sourceRect: &Rect, destRect: &Rect);
-
-pub fn flip();
-
-pub fn clear();
-
-pub fn getCanvas() -> &Canvas;*/
-
 impl Graphics {
     pub fn new(name: &str, context: Sdl, video: VideoSubsystem) -> Self {
         let window: Window = video
