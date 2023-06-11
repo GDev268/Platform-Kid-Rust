@@ -1,3 +1,4 @@
+use sdl2::image::*;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use sdl2::render::Canvas;
@@ -6,8 +7,8 @@ use sdl2::surface::Surface;
 use sdl2::ttf::Font;
 use sdl2::video::Window;
 use sdl2::*;
-use sdl2::image::*;
 
+use std::mem;
 use std::rc::Rc;
 
 use std::borrow::Borrow;
@@ -31,28 +32,37 @@ pub fn clear();
 pub fn getCanvas() -> &Canvas;*/
 
 impl Graphics {
-    pub fn new(name: &str,context:Sdl,video:VideoSubsystem) -> Self { 
-        let window: Window =  video.window("Aaa", 1280, 720).position_centered().build().unwrap();
+    pub fn new(name: &str, context: Sdl, video: VideoSubsystem) -> Self {
+        let window: Window = video
+            .window("Aaa", 1280, 720)
+            .position_centered()
+            .build()
+            .unwrap();
         let canvas: Canvas<Window> = window.into_canvas().build().unwrap();
-        
-        return Self{
-            _renderer: canvas,
-        }
+        return Self { _renderer: canvas };
     }
 
-    pub fn loadImage(filepath:&str,this:&mut Self) -> Surface<'static>{
-        if !LoadSurface::from_file(filepath).is_err() {
-            return LoadSurface::from_file(filepath).unwrap();
-        };
+    pub fn loadImage<'a>(filepath: &str, this: &mut Self) -> Result<Surface<'a>, String> {
+        return LoadSurface::from_file(filepath);
     }
 
-    /*pub fn loadText(font: &Font, text: &char, color: Color) -> &Surface {return Surface{};}
+    pub fn loadText<'a>(font: &Font, text: &str, color: Color) -> Result<Surface<'a>, String> {
+        return font.render(text).blended(color).map_err(|e| e.to_string());
+    }
 
-    pub fn blitSurface(source: &Texture, sourceRect: &Rect, destRect: &Rect) {}
+    pub fn blitSurface(source: &Texture, sourceRect: &Rect, destRect: &Rect, this: &mut Self) {
+        let _ = this._renderer.copy(&source, Some(*sourceRect), Some(*destRect));
+    }
 
-    pub fn flip() {}
+    pub fn flip(this: &mut Self) {
+        this._renderer.present();
+    }
 
-    pub fn clear() {}
+    pub fn clear(this: &mut Self) {
+        this._renderer.clear();
+    }
 
-    pub fn getCanvas() -> Canvas<Window> {return Canvas<Window>{}}*/
+    pub fn getCanvas(this: Self) -> Canvas<Window> {
+        return this._renderer;
+    }
 }
