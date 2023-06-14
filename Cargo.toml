@@ -3,6 +3,8 @@ name = "Platform-Kid"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies]
+
 
 [dependencies.sdl2]
 default-features = false

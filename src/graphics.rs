@@ -27,7 +27,7 @@ impl Graphics {
             .build()
             .unwrap();
         let canvas: Canvas<Window> = window.into_canvas().build().unwrap();
-        return Self { _renderer: canvas };
+         return Self { _renderer: canvas };
     }
 
     pub fn loadImage<'a>(filepath: &str, this: &mut Self) -> Result<Surface<'a>, String> {
