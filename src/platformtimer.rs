@@ -22,11 +22,11 @@ impl PlatformTimer{
         return self.endTick - self.startTick;
     } 
 
-    pub fn start(this: &mut Self) {
-        this.hasStarted = true;
-        this.hasPaused = false;
+    pub fn start(&mut self) {
+        self.hasStarted = true;
+        self.hasPaused = false;
         
-        this.startTick = unsafe {curTime};
+        self.startTick = unsafe {curTime};
     }
 
     pub fn pause(this: &mut Self){

@@ -16,7 +16,10 @@ use std::collections::HashMap;
 use std::ops::Deref;
 
 pub struct Graphics {
-    _renderer: Canvas<Window>,
+    pub _renderer: Canvas<Window>,
+    pub context:Sdl,
+    pub ttf_context:Option<Result<sdl2::ttf::Sdl2TtfContext, String>>,
+    pub image_context:Option<Result<sdl2::image::Sdl2ImageContext, String>>
 }
 
 impl Graphics {
@@ -27,10 +30,10 @@ impl Graphics {
             .build()
             .unwrap();
         let canvas: Canvas<Window> = window.into_canvas().build().unwrap();
-         return Self { _renderer: canvas };
+         return Self { _renderer: canvas,ttf_context:None,image_context:None,context:context };
     }
 
-    pub fn loadImage<'a>(filepath: &str, this: &mut Self) -> Result<Surface<'a>, String> {
+    pub fn loadImage<'a>(&self,filepath: &str) -> Result<Surface<'a>, String> {
         return LoadSurface::from_file(filepath);
     }
 
