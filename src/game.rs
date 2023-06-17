@@ -1,16 +1,15 @@
-use crate::fps::PlatformFPS;
-use crate::graphics::{Graphics, self};
 use crate::sdl2::event::Event;
 use std::time::{Instant,UNIX_EPOCH,Duration}; 
 use sdl2::keyboard::Keycode; 
-
-
+use std::thread::sleep;
 use crate::sdl2::VideoSubsystem;
 use crate::sdl2::image::{InitFlag,SaveSurface};
-
 use sdl2::pixels::Color;
 
 use crate::curTime;
+use crate::fps::PlatformFPS;
+use crate::graphics::Graphics;
+
 
 pub struct Game{
     fpsManager: PlatformFPS,
@@ -49,13 +48,20 @@ impl Game {
         let mut event_pump = self.graphics.context.event_pump().unwrap();
         let mut globalTimer:Instant = Instant::now();
 
-        self.graphics._renderer.set_draw_color(Color::RGB(42,253,5));
+        self.graphics._renderer.set_draw_color(Color::RGB(0,0,0));
         self.graphics._renderer.clear();
         self.graphics._renderer.present();
 
+        let surface = self.graphics.loadImage("/home/g/Downloads/lemon.png").unwrap();
+        let texture_creator = self.graphics._renderer.texture_creator();
+        let texture = surface.as_texture(&texture_creator).unwrap();
+
+
+        self.fpsManager.fpsLimit = Duration::new(0, 1000000000u32/120);
         'running: loop{
-            self.graphics._renderer.set_draw_color(Color::RGB(42,253,5));
-            self.graphics._renderer.clear();
+            self.fpsManager.startTick = Instant::now();
+
+
             unsafe {
                 curTime = Instant::elapsed(&globalTimer).as_millis();  
             }
@@ -66,11 +72,15 @@ impl Game {
                     Event::KeyDown { keycode: Some(Keycode::Escape), ..} => {break 'running},
                     _ => {}
                 }
+            }    
+
+
+            self.fpsManager.update();
+            print!("\rFPS: {:.2}", self.fpsManager.frameCount / self.fpsManager.frameElapsed);
+            if self.fpsManager.deltaTime < self.fpsManager.fpsLimit {
+                sleep(self.fpsManager.fpsLimit - self.fpsManager.deltaTime);
             }
 
-            self.graphics._renderer.present();
-
-            let surface = self.graphics.loadImage("ada");
         }
 
         
@@ -78,8 +88,3 @@ impl Game {
 
 }
 
-/*        fpsManager.update();
-        if fpsManager._fps > 5*1000/60 {
-            sleep(Duration::from_millis(1000 / 60));
-        }
-        println!("Current FPS Count: {}",fpsManager._fps); */

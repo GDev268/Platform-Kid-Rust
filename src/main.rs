@@ -26,7 +26,6 @@ use crate::sdl2::image::*;*/
 use crate::game::Game;
 
 use std::time::{Instant,UNIX_EPOCH,Duration}; 
-use std::thread::sleep;
  
 pub static mut curTime:u128 = 0;
 
