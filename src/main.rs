@@ -4,6 +4,7 @@ mod fps;
 mod graphics;
 mod platformtimer;
 mod game;
+mod sprite;
 
 use std::borrow::{Borrow, BorrowMut};
 

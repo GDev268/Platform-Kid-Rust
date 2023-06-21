@@ -17,9 +17,10 @@ use std::ops::Deref;
 
 pub struct Graphics {
     pub _renderer: Canvas<Window>,
-    pub context:Sdl,
-    pub ttf_context:Option<Result<sdl2::ttf::Sdl2TtfContext, String>>,
-    pub image_context:Option<Result<sdl2::image::Sdl2ImageContext, String>>
+    pub context: Sdl,
+    pub ttf_context: Option<Result<sdl2::ttf::Sdl2TtfContext, String>>,
+    pub image_context: Option<Result<sdl2::image::Sdl2ImageContext, String>>,
+    pub texture_creator: render::TextureCreator<video::WindowContext>,
 }
 
 impl Graphics {
@@ -30,10 +31,18 @@ impl Graphics {
             .build()
             .unwrap();
         let canvas: Canvas<Window> = window.into_canvas().build().unwrap();
-         return Self { _renderer: canvas,ttf_context:None,image_context:None,context:context };
+        let texture_creator = canvas.texture_creator();
+
+        return Self {
+            _renderer: canvas,
+            ttf_context: None,
+            image_context: None,
+            context: context,
+            texture_creator: texture_creator,
+        };
     }
 
-    pub fn loadImage<'a>(&self,filepath: &str) -> Result<Surface<'a>, String> {
+    pub fn loadImage<'a>(&self, filepath: &str) -> Result<Surface<'a>, String> {
         return LoadSurface::from_file(filepath);
     }
 
@@ -41,8 +50,9 @@ impl Graphics {
         return font.render(text).blended(color).map_err(|e| e.to_string());
     }
 
-    pub fn blitSurface(source: &Texture, sourceRect: &Rect, destRect: &Rect, this: &mut Self) {
-        let _ = this._renderer.copy(&source, Some(*sourceRect), Some(*destRect));
+    pub fn blitSurface(&mut self,source: &Texture, sourceRect: Rect, destRect: Rect) {
+        let _ = self._renderer
+            .copy(source, Some(sourceRect), Some(destRect));
     }
 
     pub fn flip(this: &mut Self) {
